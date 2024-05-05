@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 import torch
 import torch.nn as nn
 from sklearn.metrics import mean_squared_error
+import pandas_ta as ta
 
 torch.manual_seed(12)
 
