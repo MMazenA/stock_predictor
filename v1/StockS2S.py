@@ -6,7 +6,6 @@ from sklearn.preprocessing import MinMaxScaler
 import torch
 import torch.nn as nn
 from sklearn.metrics import mean_squared_error
-import pandas_ta as ta
 
 torch.manual_seed(12)
 
@@ -55,9 +54,13 @@ class StockLSTMPredictor:
             interval=self.interval,
         )
         self.data = data
-        self.df = pd.DataFrame(data[["Close", "Volume", "Open", "High", "Low"]])
+        self.df = pd.DataFrame(data[["Volume", "Open", "High", "Low","Adj Close"]])
 
     def preprocess_data(self):
+        self.df["Close"] = self.df["Adj Close"] - self.df.Open
+        self.df["Close"] = self.df["Close"].shift(-1)
+        self.df.dropna(inplace=True, axis=0)
+        self.df.drop("Adj Close",axis=1,inplace=True)
         self.df_scaled = self.scaler_close.fit_transform(self.df[["Close"]])
         self.scaler_volume.fit(self.df[["Volume"]])
         self.scaler_open.fit(self.df[["Open"]])
